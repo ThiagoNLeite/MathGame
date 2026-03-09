@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathGame — Login</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #2a2a3a;
+    --accent: #f0e040;
+    --accent2: #40e0f0;
+    --danger: #f04060;
+    --text: #e8e8f0;
+    --muted: #666680;
+    --card: #16161f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Grade de fundo animada */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+    opacity: 0.4;
+    animation: gridScroll 20s linear infinite;
+  }
+
+  @keyframes gridScroll {
+    0% { background-position: 0 0; }
+    100% { background-position: 60px 60px; }
+  }
+
+  /* Brilho radial central */
+  body::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(ellipse, rgba(240,224,64,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+  }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .logo-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    color: var(--accent);
+    letter-spacing: 6px;
+    line-height: 1;
+    text-shadow: 0 0 40px rgba(240,224,64,0.4), 0 0 80px rgba(240,224,64,0.15);
+    animation: pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { text-shadow: 0 0 40px rgba(240,224,64,0.4), 0 0 80px rgba(240,224,64,0.15); }
+    50% { text-shadow: 0 0 60px rgba(240,224,64,0.6), 0 0 120px rgba(240,224,64,0.25); }
+  }
+
+  .logo-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+  }
+
+  /* Canto decorativo */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    width: 20px; height: 20px;
+    border-top: 2px solid var(--accent);
+    border-left: 2px solid var(--accent);
+  }
+  .card::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; right: -1px;
+    width: 20px; height: 20px;
+    border-bottom: 2px solid var(--accent);
+    border-right: 2px solid var(--accent);
+  }
+
+  /* Abas de navegação */
+  .tabs {
+    display: flex;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: color 0.2s;
+    position: relative;
+  }
+
+  .tab.active {
+    color: var(--accent);
+  }
+
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+  }
+
+  .tab:hover { color: var(--text); }
+
+  /* Formulário */
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  label {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 0.75rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(240,224,64,0.1);
+  }
+
+  .btn-primary {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-primary::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(255,255,255,0.2);
+    transform: translateX(-100%);
+    transition: transform 0.3s;
+  }
+
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(240,224,64,0.3); }
+  .btn-primary:active { transform: translateY(0); }
+
+  .msg {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    display: none;
+  }
+
+  .msg.erro { background: rgba(240,64,96,0.1); border-left: 2px solid var(--danger); color: var(--danger); }
+  .msg.sucesso { background: rgba(64,224,240,0.1); border-left: 2px solid var(--accent2); color: var(--accent2); }
+  .msg.show { display: block; }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .footer-hint {
+    text-align: center;
+    margin-top: 1.5rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <div class="logo-title">MATH<br>GAME</div>
+    <div class="logo-sub">Desafio de matemática</div>
+  </div>
+
+  <div class="card">
+    <div class="tabs">
+      <button class="tab active" onclick="trocarAba('login')">Entrar</button>
+      <button class="tab" onclick="trocarAba('registro')">Cadastrar</button>
+    </div>
+
+    <!-- Painel de Login -->
+    <div class="panel active" id="panel-login">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="login-username" placeholder="seu_username" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-senha" placeholder="••••••••" autocomplete="current-password">
+      </div>
+      <button class="btn-primary" onclick="fazerLogin()">Entrar</button>
+      <div class="msg" id="msg-login"></div>
+    </div>
+
+    <!-- Painel de Registro -->
+    <div class="panel" id="panel-registro">
+      <div class="form-group">
+        <label>Username</label>
+        <input type="text" id="reg-username" placeholder="escolha_um_username" autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="reg-senha" placeholder="mínimo 4 caracteres" autocomplete="new-password">
+      </div>
+      <button class="btn-primary" onclick="fazerRegistro()">Criar conta</button>
+      <div class="msg" id="msg-registro"></div>
+    </div>
+  </div>
+
+  <div class="footer-hint">v2.0 · SQLite + Flask + Python</div>
+</div>
+
+<script>
+// ── NAVEGAÇÃO ENTRE ABAS ────────────────────────────────────────────────────
+function trocarAba(aba) {
+  document.querySelectorAll('.tab').forEach((t, i) => {
+    t.classList.toggle('active', (i === 0 && aba === 'login') || (i === 1 && aba === 'registro'));
+  });
+  document.querySelectorAll('.panel').forEach((p, i) => {
+    p.classList.toggle('active', (i === 0 && aba === 'login') || (i === 1 && aba === 'registro'));
+  });
+}
+
+// ── MENSAGENS ───────────────────────────────────────────────────────────────
+function mostrarMsg(id, texto, tipo) {
+  const el = document.getElementById(id);
+  el.textContent = texto;
+  el.className = `msg ${tipo} show`;
+}
+
+// ── REQUISIÇÕES À API ───────────────────────────────────────────────────────
+// fetch() é a forma moderna de fazer requisições HTTP em JavaScript.
+// async/await torna o código assíncrono mais legível.
+async function fazerLogin() {
+  const username = document.getElementById('login-username').value.trim();
+  const senha = document.getElementById('login-senha').value;
+
+  if (!username || !senha) {
+    mostrarMsg('msg-login', 'Preencha todos os campos', 'erro');
+    return;
+  }
+
+  // POST para /api/login com JSON no corpo
+  const res = await fetch('/api/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, senha })
+  });
+  const data = await res.json();
+
+  if (data.ok) {
+    window.location.href = '/jogo';
+  } else {
+    mostrarMsg('msg-login', data.erro, 'erro');
+  }
+}
+
+async function fazerRegistro() {
+  const username = document.getElementById('reg-username').value.trim();
+  const senha = document.getElementById('reg-senha').value;
+
+  const res = await fetch('/api/registrar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ username, senha })
+  });
+  const data = await res.json();
+
+  if (data.ok) {
+    mostrarMsg('msg-registro', 'Conta criada! Entrando...', 'sucesso');
+    setTimeout(() => window.location.href = '/jogo', 1000);
+  } else {
+    mostrarMsg('msg-registro', data.erro, 'erro');
+  }
+}
+
+// Enter para submeter formulários
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const activePanel = document.querySelector('.panel.active').id;
+    if (activePanel === 'panel-login') fazerLogin();
+    else fazerRegistro();
+  }
+});
+</script>
+</body>
+</html>

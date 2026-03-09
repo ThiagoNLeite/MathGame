@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathGame — Jogo</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --border2: #2a2a3a;
+    --accent: #f0e040;
+    --accent2: #40e0f0;
+    --green: #40f090;
+    --danger: #f04060;
+    --text: #e8e8f0;
+    --muted: #555570;
+    --card: #13131c;
+    --card2: #16161f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(240,224,64,0.3);
+  }
+
+  .header-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .stat-chip {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+  }
+
+  .stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .stat-value {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .header-nav {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .nav-btn {
+    padding: 0.4rem 0.9rem;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* ── LAYOUT PRINCIPAL ── */
+  main {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 280px 1fr 280px;
+    gap: 0;
+    max-width: 1200px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 2rem;
+    gap: 1.5rem;
+  }
+
+  /* ── PAINEL ESQUERDO — Configurações ── */
+  .panel-config {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    position: relative;
+  }
+
+  /* ── SELETOR DE DIFICULDADE ── */
+  .dificuldade-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.4rem;
+  }
+
+  .dif-btn {
+    padding: 0.6rem 0.3rem;
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1;
+  }
+
+  .dif-btn span {
+    display: block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.45rem;
+    letter-spacing: 1px;
+    margin-top: 3px;
+    opacity: 0.6;
+  }
+
+  .dif-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .dif-btn.active {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #0a0a0f;
+  }
+
+  /* ── OPERAÇÕES DISPONÍVEIS ── */
+  .ops-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .op-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 0.8rem;
+    opacity: 0.4;
+    transition: opacity 0.3s;
+  }
+
+  .op-item.available { opacity: 1; }
+
+  .op-symbol {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    width: 20px;
+    text-align: center;
+  }
+
+  .op-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+  }
+
+  /* ── CENTRO — Área do Jogo ── */
+  .panel-jogo {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Estado inicial (antes de começar) */
+  .inicio-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: 1.5rem;
+    text-align: center;
+    padding: 3rem;
+  }
+
+  /* Estado de jogo ativo */
+  .jogo-state { display: none; flex-direction: column; gap: 1rem; }
+  .resultado-state { display: none; flex-direction: column; align-items: center; gap: 1rem; padding: 1rem; }
+
+  /* Área da questão */
+  .questao-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .questao-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--accent);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: none;
+  }
+
+  .questao-card.loading::before {
+    animation: none;
+  }
+
+  .operacao-badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    background: rgba(240,224,64,0.1);
+    border: 1px solid rgba(240,224,64,0.2);
+    padding: 0.25rem 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .enunciado {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4.5rem;
+    color: var(--text);
+    letter-spacing: 4px;
+    line-height: 1;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .igual {
+    font-size: 3.5rem;
+    color: var(--accent);
+    margin: 0 1rem;
+  }
+
+  .questao-num {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    margin-top: 1rem;
+  }
+
+  /* Timer */
+  .timer-wrap {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+  }
+
+  .timer-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .timer-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--border2);
+    overflow: hidden;
+  }
+
+  .timer-fill {
+    height: 100%;
+    background: var(--accent);
+    transition: width 1s linear, background 0.3s;
+    width: 100%;
+  }
+
+  .timer-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    min-width: 50px;
+    text-align: right;
+  }
+
+  /* Input de resposta */
+  .resposta-wrap {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  .resposta-input {
+    flex: 1;
+    background: var(--card);
+    border: 2px solid var(--border2);
+    color: var(--text);
+    padding: 1rem 1.25rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 3px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .resposta-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 4px rgba(240,224,64,0.1);
+  }
+
+  .resposta-input::placeholder { color: var(--muted); font-size: 1.2rem; }
+
+  .btn-responder {
+    padding: 1rem 1.5rem;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-width: 100px;
+  }
+
+  .btn-responder:hover { background: #fff; transform: translateY(-1px); }
+  .btn-responder:active { transform: translateY(0); }
+
+  /* Botões de ação do jogo */
+  .acoes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .btn-iniciar {
+    grid-column: 1 / -1;
+    padding: 1.2rem;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-iniciar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 30px rgba(240,224,64,0.3);
+  }
+
+  .btn-action {
+    padding: 0.75rem;
+    background: var(--card);
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-action:hover { border-color: var(--accent2); color: var(--accent2); }
+
+  .btn-encerrar {
+    padding: 0.75rem;
+    background: none;
+    border: 1px solid rgba(240,64,96,0.3);
+    color: rgba(240,64,96,0.6);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-encerrar:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ── Feedback de resultado ── */
+  .feedback-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    text-align: center;
+    animation: slideIn 0.3s ease;
+  }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .feedback-icone {
+    font-size: 3.5rem;
+    margin-bottom: 0.75rem;
+    display: block;
+  }
+
+  .feedback-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    margin-bottom: 0.5rem;
+  }
+
+  .feedback-titulo.acerto { color: var(--green); }
+  .feedback-titulo.erro { color: var(--danger); }
+
+  .feedback-detalhe {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .feedback-pontos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+  }
+
+  .btn-proxima {
+    margin-top: 1rem;
+    padding: 0.9rem 2rem;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .btn-proxima:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(240,224,64,0.3);
+  }
+
+  /* ── PAINEL DIREITO — Histórico/Log ── */
+  .panel-log {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .log-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .log-lista::-webkit-scrollbar { width: 4px; }
+  .log-lista::-webkit-scrollbar-track { background: var(--bg); }
+  .log-lista::-webkit-scrollbar-thumb { background: var(--border2); }
+
+  .log-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--surface);
+    border-left: 2px solid transparent;
+    animation: logEntry 0.3s ease;
+    font-size: 0.8rem;
+  }
+
+  @keyframes logEntry {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+  }
+
+  .log-item.acerto { border-left-color: var(--green); }
+  .log-item.erro { border-left-color: var(--danger); }
+
+  .log-icon { font-size: 0.8rem; }
+
+  .log-content { flex: 1; }
+  .log-expr { font-family: 'Space Mono', monospace; font-size: 0.7rem; color: var(--text); }
+  .log-pts { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; letter-spacing: 1px; }
+  .log-pts.acerto { color: var(--green); }
+  .log-pts.erro { color: var(--danger); }
+
+  .empty-log {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    line-height: 2;
+  }
+
+  /* ── Tela de resumo final ── */
+  .resumo-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .resumo-overlay.show { display: flex; }
+
+  .resumo-card {
+    background: var(--card);
+    border: 1px solid var(--border2);
+    padding: 3rem;
+    max-width: 480px;
+    width: 90%;
+    text-align: center;
+    position: relative;
+    animation: slideIn 0.4s ease;
+  }
+
+  .resumo-card::before {
+    content: '';
+    position: absolute;
+    top: -1px; left: -1px;
+    right: -1px;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+  }
+
+  .resumo-titulo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    letter-spacing: 6px;
+    color: var(--accent);
+    margin-bottom: 2rem;
+  }
+
+  .resumo-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+
+  .resumo-stat {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 1rem;
+  }
+
+  .resumo-stat-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .resumo-stat-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    color: var(--accent);
+    letter-spacing: 3px;
+  }
+
+  .btn-jogar-novamente {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.3rem;
+    letter-spacing: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-jogar-novamente:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(240,224,64,0.3); }
+
+  /* ── RESPONSIVO ── */
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+    .panel-config, .panel-log { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-logo">MATHGAME</div>
+  <div class="header-info">
+    <div class="stat-chip">
+      <span class="stat-label">Jogador</span>
+      <span class="stat-value" id="h-username" style="font-family:'Space Mono',monospace;font-size:0.9rem;letter-spacing:1px;">{{ usuario.username }}</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-label">Pontos</span>
+      <span class="stat-value" id="h-pontos">0</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-label">Acertos</span>
+      <span class="stat-value" id="h-acertos">0/0</span>
+    </div>
+  </div>
+  <div class="header-nav">
+    <a href="/ranking" class="nav-btn">Ranking</a>
+    <a href="/perfil" class="nav-btn">Perfil</a>
+    <button class="nav-btn" onclick="logout()">Sair</button>
+  </div>
+</header>
+
+<main>
+  <!-- ── ESQUERDA: Config ── -->
+  <aside class="panel-config">
+    <div class="card">
+      <div class="section-title">Dificuldade</div>
+      <div class="dificuldade-grid">
+        <button class="dif-btn active" onclick="setDificuldade(1)" data-dif="1">
+          1 <span>Fácil</span>
+        </button>
+        <button class="dif-btn" onclick="setDificuldade(2)" data-dif="2">
+          2 <span>Médio</span>
+        </button>
+        <button class="dif-btn" onclick="setDificuldade(3)" data-dif="3">
+          3 <span>Difícil</span>
+        </button>
+        <button class="dif-btn" onclick="setDificuldade(4)" data-dif="4">
+          4 <span>Expert</span>
+        </button>
+        <button class="dif-btn" onclick="setDificuldade(5)" data-dif="5">
+          5 <span>Lendário</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Operações disponíveis</div>
+      <div class="ops-list" id="ops-lista">
+        <div class="op-item available" data-op="soma">
+          <span class="op-symbol">+</span>
+          <span class="op-name">Soma</span>
+        </div>
+        <div class="op-item available" data-op="subtracao">
+          <span class="op-symbol">−</span>
+          <span class="op-name">Subtração</span>
+        </div>
+        <div class="op-item" data-op="multiplicacao">
+          <span class="op-symbol">×</span>
+          <span class="op-name">Multiplicação</span>
+        </div>
+        <div class="op-item" data-op="divisao">
+          <span class="op-symbol">÷</span>
+          <span class="op-name">Divisão</span>
+        </div>
+        <div class="op-item" data-op="potencia">
+          <span class="op-symbol">^</span>
+          <span class="op-name">Potência</span>
+        </div>
+        <div class="op-item" data-op="raiz">
+          <span class="op-symbol">√</span>
+          <span class="op-name">Raiz Quadrada</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-dica" style="border-color:rgba(240,224,64,0.15)">
+      <div class="section-title">Dica</div>
+      <div style="font-family:'Space Mono',monospace;font-size:0.65rem;color:var(--muted);line-height:1.8;" id="dica-texto">
+        Nível 1: soma e subtração<br>com números até 10
+      </div>
+    </div>
+  </aside>
+
+  <!-- ── CENTRO: Jogo ── -->
+  <section class="panel-jogo">
+
+    <!-- Tela de início -->
+    <div class="inicio-state" id="state-inicio">
+      <div style="font-family:'Bebas Neue',sans-serif;font-size:1.3rem;color:var(--muted);letter-spacing:4px;">
+        Pronto para jogar?
+      </div>
+      <div class="acoes-grid">
+        <button class="btn-iniciar" onclick="iniciarJogo()">Iniciar Partida</button>
+      </div>
+    </div>
+
+    <!-- Tela de jogo ativo -->
+    <div class="jogo-state" id="state-jogo">
+      <!-- Timer -->
+      <div class="timer-wrap">
+        <span class="timer-label">Tempo</span>
+        <div class="timer-bar">
+          <div class="timer-fill" id="timer-fill"></div>
+        </div>
+        <span class="timer-num" id="timer-num">30</span>
+      </div>
+
+      <!-- Questão -->
+      <div class="questao-card" id="questao-card">
+        <div class="operacao-badge" id="op-badge">SOMA</div>
+        <div class="enunciado">
+          <span id="enunciado-texto">? + ?</span>
+          <span class="igual">=</span>
+          <span style="color:var(--accent)">?</span>
+        </div>
+        <div class="questao-num" id="questao-num">Questão 1</div>
+      </div>
+
+      <!-- Input de resposta -->
+      <div class="resposta-wrap">
+        <input
+          class="resposta-input"
+          type="number"
+          id="resposta-input"
+          placeholder="Digite sua resposta"
+          autofocus
+        >
+        <button class="btn-responder" onclick="enviarResposta()">OK ↵</button>
+      </div>
+
+      <!-- Botões de controle -->
+      <div class="acoes-grid">
+        <button class="btn-action" onclick="novaQuestao()">Pular →</button>
+        <button class="btn-encerrar" onclick="encerrarJogo()">Encerrar</button>
+      </div>
+    </div>
+
+    <!-- Tela de feedback pós-resposta -->
+    <div class="resultado-state" id="state-resultado">
+      <div class="feedback-card" id="feedback-card" style="width:100%">
+        <span class="feedback-icone" id="fb-icone">✓</span>
+        <div class="feedback-titulo" id="fb-titulo">CORRETO!</div>
+        <div class="feedback-detalhe" id="fb-detalhe">8 + 5 = 13</div>
+        <div class="feedback-pontos" id="fb-pontos">+20 pts</div>
+        <button class="btn-proxima" onclick="novaQuestao()">Próxima Questão →</button>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- ── DIREITA: Log da sessão ── -->
+  <aside class="panel-log">
+    <div class="card" style="flex:1">
+      <div class="section-title">Log da Sessão</div>
+      <div class="log-lista" id="log-lista">
+        <div class="empty-log" id="log-empty">
+          Nenhuma rodada<br>ainda jogada
+        </div>
+      </div>
+    </div>
+  </aside>
+</main>
+
+<!-- ── OVERLAY DE RESUMO FINAL ── -->
+<div class="resumo-overlay" id="resumo-overlay">
+  <div class="resumo-card">
+    <div class="resumo-titulo">Game Over</div>
+    <div class="resumo-stats">
+      <div class="resumo-stat">
+        <div class="resumo-stat-label">Pontuação</div>
+        <div class="resumo-stat-val" id="res-pontos">0</div>
+      </div>
+      <div class="resumo-stat">
+        <div class="resumo-stat-label">Acertos</div>
+        <div class="resumo-stat-val" id="res-acertos">0</div>
+      </div>
+      <div class="resumo-stat">
+        <div class="resumo-stat-label">Rodadas</div>
+        <div class="resumo-stat-val" id="res-rodadas">0</div>
+      </div>
+      <div class="resumo-stat">
+        <div class="resumo-stat-label">Taxa</div>
+        <div class="resumo-stat-val" id="res-taxa">0%</div>
+      </div>
+    </div>
+    <button class="btn-jogar-novamente" onclick="jogarNovamente()">Jogar Novamente</button>
+    <br><br>
+    <a href="/ranking" style="font-family:'Space Mono',monospace;font-size:0.7rem;color:var(--muted);text-decoration:none;letter-spacing:2px;">
+      Ver Ranking →
+    </a>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════════════════
+// ESTADO DO JOGO
+// Tudo que precisamos saber sobre a partida atual fica aqui.
+// Centralizar o estado evita bugs e torna o código mais legível.
+// ════════════════════════════════════════════════════════════════
+const estado = {
+  dificuldade: 1,
+  sessaoId: null,
+  pontos: 0,
+  acertos: 0,
+  rodadas: 0,
+  questaoAtiva: false,
+  timerInicio: null,    // quando a questão foi exibida (para calcular tempo)
+  timerInterval: null,  // referência ao setInterval do countdown
+  tempoLimite: 30,
+};
+
+// Dicas por dificuldade
+const DICAS = {
+  1: 'Nível 1: soma e subtração\ncom números até 10',
+  2: 'Nível 2: + multiplicação\nnúmeros até 50',
+  3: 'Nível 3: + divisão exata\nnúmeros até 100',
+  4: 'Nível 4: + potenciação\nnúmeros até 500',
+  5: 'Nível 5: TUDO + raiz quadrada\nnúmeros até 1000',
+};
+
+// Operações por dificuldade
+const OPS_POR_DIF = {
+  1: ['soma', 'subtracao'],
+  2: ['soma', 'subtracao', 'multiplicacao'],
+  3: ['soma', 'subtracao', 'multiplicacao', 'divisao'],
+  4: ['soma', 'subtracao', 'multiplicacao', 'divisao', 'potencia'],
+  5: ['soma', 'subtracao', 'multiplicacao', 'divisao', 'potencia', 'raiz'],
+};
+
+// ── INICIALIZAÇÃO ────────────────────────────────────────────────
+
+function setDificuldade(dif) {
+  if (estado.questaoAtiva) return; // não muda durante partida
+  estado.dificuldade = dif;
+
+  // Atualiza botões visuais
+  document.querySelectorAll('.dif-btn').forEach(b => {
+    b.classList.toggle('active', parseInt(b.dataset.dif) === dif);
+  });
+
+  // Atualiza lista de operações disponíveis
+  const opsDisponiveis = OPS_POR_DIF[dif];
+  document.querySelectorAll('.op-item').forEach(el => {
+    el.classList.toggle('available', opsDisponiveis.includes(el.dataset.op));
+  });
+
+  // Atualiza dica
+  document.getElementById('dica-texto').innerHTML = DICAS[dif].replace('\n', '<br>');
+}
+
+// ── CONTROLE DE TELAS ───────────────────────────────────────────
+
+function mostrarState(state) {
+  // Esconde todas as telas e mostra só a desejada
+  document.getElementById('state-inicio').style.display = 'none';
+  document.getElementById('state-jogo').style.display = 'none';
+  document.getElementById('state-resultado').style.display = 'none';
+
+  const el = document.getElementById(`state-${state}`);
+  el.style.display = state === 'resultado' ? 'flex' : 'flex';
+  el.style.flexDirection = 'column';
+}
+
+// ── FLUXO DO JOGO ────────────────────────────────────────────────
+
+async function iniciarJogo() {
+  estado.pontos = 0;
+  estado.acertos = 0;
+  estado.rodadas = 0;
+  estado.sessaoId = null;
+  atualizarHeader();
+  limparLog();
+  await novaQuestao();
+}
+
+async function novaQuestao() {
+  pararTimer();
+
+  const res = await fetch('/api/nova-questao', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ dificuldade: estado.dificuldade, sessao_id: estado.sessaoId })
+  });
+
+  const data = await res.json();
+  if (!data.ok) { alert(data.erro); return; }
+
+  const q = data.questao;
+  estado.sessaoId = q.sessao_id;
+  estado.tempoLimite = q.tempo_limite;
+  estado.questaoAtiva = true;
+  estado.rodadas++;
+
+  // Exibe questão
+  document.getElementById('op-badge').textContent = q.nome_operacao.toUpperCase();
+  document.getElementById('enunciado-texto').textContent = q.enunciado;
+  document.getElementById('questao-num').textContent = `Questão ${estado.rodadas}`;
+
+  // Limpa input
+  const input = document.getElementById('resposta-input');
+  input.value = '';
+
+  mostrarState('jogo');
+  input.focus();
+  iniciarTimer(q.tempo_limite);
+}
+
+function enviarResposta() {
+  if (!estado.questaoAtiva) return;
+  const val = document.getElementById('resposta-input').value.trim();
+  if (val === '' || isNaN(val)) {
+    document.getElementById('resposta-input').style.borderColor = 'var(--danger)';
+    setTimeout(() => document.getElementById('resposta-input').style.borderColor = '', 500);
+    return;
+  }
+  processarResposta(parseFloat(val));
+}
+
+async function processarResposta(resposta) {
+  if (!estado.questaoAtiva) return;
+  estado.questaoAtiva = false;
+  pararTimer();
+
+  // Calcula tempo de resposta
+  const tempoResposta = (Date.now() - estado.timerInicio) / 1000;
+
+  const res = await fetch('/api/responder', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ resposta, tempo_resposta: tempoResposta })
+  });
+
+  const data = await res.json();
+  if (!data.ok) return;
+
+  // Atualiza estado
+  if (data.acertou) estado.acertos++;
+  estado.pontos += data.pontos;
+  atualizarHeader();
+
+  // Adiciona ao log
+  adicionarLog(data);
+
+  // Mostra feedback
+  const fbIcone = document.getElementById('fb-icone');
+  const fbTitulo = document.getElementById('fb-titulo');
+  const fbDetalhe = document.getElementById('fb-detalhe');
+  const fbPontos = document.getElementById('fb-pontos');
+
+  if (data.acertou) {
+    fbIcone.textContent = '✓';
+    fbTitulo.textContent = 'CORRETO!';
+    fbTitulo.className = 'feedback-titulo acerto';
+    fbPontos.textContent = `+${data.pontos} pts`;
+    fbPontos.style.color = 'var(--green)';
+  } else {
+    fbIcone.textContent = '✗';
+    fbTitulo.textContent = 'INCORRETO';
+    fbTitulo.className = 'feedback-titulo erro';
+    fbPontos.textContent = '+0 pts';
+    fbPontos.style.color = 'var(--danger)';
+  }
+
+  fbDetalhe.textContent = `${data.enunciado} = ${formatarNum(data.resultado_correto)}`;
+
+  mostrarState('resultado');
+}
+
+// ── TIMER ───────────────────────────────────────────────────────
+
+function iniciarTimer(segundos) {
+  estado.timerInicio = Date.now();
+  const fill = document.getElementById('timer-fill');
+  const num = document.getElementById('timer-num');
+  let restante = segundos;
+
+  fill.style.width = '100%';
+  fill.style.background = 'var(--accent)';
+  num.textContent = restante;
+  num.style.color = 'var(--accent)';
+
+  estado.timerInterval = setInterval(() => {
+    restante--;
+    const pct = (restante / segundos) * 100;
+    fill.style.width = pct + '%';
+    num.textContent = restante;
+
+    // Muda cor conforme urgência
+    if (pct <= 25) {
+      fill.style.background = 'var(--danger)';
+      num.style.color = 'var(--danger)';
+    } else if (pct <= 50) {
+      fill.style.background = '#f0a040';
+      num.style.color = '#f0a040';
+    }
+
+    if (restante <= 0) {
+      pararTimer();
+      tempoEsgotado();
+    }
+  }, 1000);
+}
+
+function pararTimer() {
+  clearInterval(estado.timerInterval);
+  estado.timerInterval = null;
+}
+
+async function tempoEsgotado() {
+  estado.questaoAtiva = false;
+  // Envia resposta nula (tempo esgotado)
+  await processarResposta(NaN);
+}
+
+// ── ENCERRAR JOGO ───────────────────────────────────────────────
+
+async function encerrarJogo() {
+  if (!estado.sessaoId) { mostrarState('inicio'); return; }
+
+  pararTimer();
+
+  const res = await fetch('/api/encerrar-sessao', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }
+  });
+
+  const data = await res.json();
+
+  if (data.ok) {
+    const r = data.resumo;
+    const taxa = r.rodadas > 0 ? Math.round(r.acertos / r.rodadas * 100) : 0;
+
+    document.getElementById('res-pontos').textContent = r.pontuacao_total;
+    document.getElementById('res-acertos').textContent = r.acertos;
+    document.getElementById('res-rodadas').textContent = r.rodadas;
+    document.getElementById('res-taxa').textContent = taxa + '%';
+
+    document.getElementById('resumo-overlay').classList.add('show');
+  }
+
+  estado.sessaoId = null;
+  estado.questaoAtiva = false;
+}
+
+function jogarNovamente() {
+  document.getElementById('resumo-overlay').classList.remove('show');
+  mostrarState('inicio');
+}
+
+// ── LOG ─────────────────────────────────────────────────────────
+
+function adicionarLog(data) {
+  const lista = document.getElementById('log-lista');
+  document.getElementById('log-empty').style.display = 'none';
+
+  const item = document.createElement('div');
+  item.className = `log-item ${data.acertou ? 'acerto' : 'erro'}`;
+  item.innerHTML = `
+    <span class="log-icon">${data.acertou ? '✓' : '✗'}</span>
+    <div class="log-content">
+      <div class="log-expr">${data.enunciado} = ${formatarNum(data.resultado_correto)}</div>
+    </div>
+    <span class="log-pts ${data.acertou ? 'acerto' : 'erro'}">
+      ${data.acertou ? '+' + data.pontos : '0'}
+    </span>
+  `;
+
+  // Insere no topo
+  lista.insertBefore(item, lista.firstChild);
+}
+
+function limparLog() {
+  const lista = document.getElementById('log-lista');
+  lista.innerHTML = '<div class="empty-log" id="log-empty">Nenhuma rodada<br>ainda jogada</div>';
+}
+
+// ── UTILITÁRIOS ─────────────────────────────────────────────────
+
+function atualizarHeader() {
+  document.getElementById('h-pontos').textContent = estado.pontos;
+  document.getElementById('h-acertos').textContent = `${estado.acertos}/${estado.rodadas}`;
+}
+
+function formatarNum(n) {
+  // Exibe inteiro se não tiver decimal
+  return Number.isInteger(n) ? n : parseFloat(n.toFixed(2));
+}
+
+async function logout() {
+  await fetch('/api/logout', { method: 'POST' });
+  window.location.href = '/login';
+}
+
+// Enter para responder
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const state = document.getElementById('state-jogo').style.display;
+    if (state !== 'none' && estado.questaoAtiva) enviarResposta();
+    else if (document.getElementById('state-resultado').style.display !== 'none') novaQuestao();
+  }
+});
+
+// ── INICIALIZAÇÃO DA PÁGINA ──────────────────────────────────────
+setDificuldade(1);
+mostrarState('inicio');
+</script>
+</body>
+</html>

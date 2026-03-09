@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathGame — Ranking</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --border2: #2a2a3a;
+    --accent: #f0e040;
+    --accent2: #40e0f0;
+    --green: #40f090;
+    --danger: #f04060;
+    --text: #e8e8f0;
+    --muted: #555570;
+    --card: #13131c;
+    --gold: #ffd700;
+    --silver: #c0c0c0;
+    --bronze: #cd7f32;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .header-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(240,224,64,0.3);
+    text-decoration: none;
+  }
+
+  .header-nav { display: flex; gap: 0.5rem; }
+
+  .nav-btn {
+    padding: 0.4rem 0.9rem;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  main {
+    max-width: 800px;
+    margin: 3rem auto;
+    padding: 0 2rem;
+  }
+
+  .page-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+  }
+
+  .page-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    letter-spacing: 8px;
+    color: var(--accent);
+    text-shadow: 0 0 40px rgba(240,224,64,0.2);
+  }
+
+  .page-sub {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 4px;
+    margin-top: 0.5rem;
+  }
+
+  /* Tabela de ranking */
+  .ranking-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .ranking-header {
+    display: grid;
+    grid-template-columns: 60px 1fr 140px 100px 80px;
+    padding: 0.5rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border2);
+    margin-bottom: 0.5rem;
+  }
+
+  .ranking-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 140px 100px 80px;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    margin-bottom: 0.4rem;
+    align-items: center;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .ranking-row:hover {
+    border-color: var(--border2);
+    transform: translateX(4px);
+  }
+
+  .ranking-row.pos-1 { border-left: 3px solid var(--gold); }
+  .ranking-row.pos-2 { border-left: 3px solid var(--silver); }
+  .ranking-row.pos-3 { border-left: 3px solid var(--bronze); }
+
+  .ranking-row.meu-perfil {
+    border-color: rgba(240,224,64,0.3);
+    background: rgba(240,224,64,0.05);
+  }
+
+  /* Brilho para top 3 */
+  .ranking-row.pos-1::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  }
+
+  .col-pos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .ranking-row.pos-1 .col-pos { color: var(--gold); }
+  .ranking-row.pos-2 .col-pos { color: var(--silver); }
+  .ranking-row.pos-3 .col-pos { color: var(--bronze); }
+
+  .col-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    background: var(--border2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .username {
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .eu-badge {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.5rem;
+    letter-spacing: 1px;
+    color: var(--accent);
+    background: rgba(240,224,64,0.1);
+    border: 1px solid rgba(240,224,64,0.2);
+    padding: 0.1rem 0.4rem;
+  }
+
+  .col-pontos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+  }
+
+  .col-partidas {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .col-taxa {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+  }
+
+  .taxa-bar {
+    width: 60px;
+    height: 4px;
+    background: var(--border2);
+    margin-top: 4px;
+    overflow: hidden;
+  }
+
+  .taxa-fill {
+    height: 100%;
+    background: var(--green);
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 4rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    line-height: 2;
+  }
+
+  .btn-jogar {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 2rem;
+    background: var(--accent);
+    border: none;
+    color: #0a0a0f;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .btn-jogar:hover { transform: translateY(-1px); box-shadow: 0 4px 20px rgba(240,224,64,0.3); }
+</style>
+</head>
+<body>
+<header>
+  <a href="/jogo" class="header-logo">MATHGAME</a>
+  <div class="header-nav">
+    <a href="/jogo" class="nav-btn">← Jogar</a>
+    <a href="/perfil" class="nav-btn">Perfil</a>
+  </div>
+</header>
+
+<main>
+  <div class="page-header">
+    <div class="page-title">Ranking</div>
+    <div class="page-sub">Global · Top jogadores</div>
+  </div>
+
+  {% if ranking %}
+  <div class="ranking-header">
+    <span>#</span>
+    <span>Jogador</span>
+    <span>Melhor Score</span>
+    <span>Partidas</span>
+    <span>Taxa</span>
+  </div>
+
+  {% for jogador in ranking %}
+  {% set taxa = (jogador.total_acertos / jogador.total_partidas * 100)|round(0)|int if jogador.total_partidas > 0 else 0 %}
+  <div class="ranking-row pos-{{ loop.index }} {% if jogador.username == usuario.username %}meu-perfil{% endif %}">
+    <div class="col-pos">{{ loop.index }}</div>
+    <div class="col-user">
+      <div class="avatar">{{ jogador.username[0]|upper }}</div>
+      <div>
+        <div class="username">{{ jogador.username }}</div>
+        {% if jogador.username == usuario.username %}
+        <span class="eu-badge">VOCÊ</span>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-pontos">{{ jogador.melhor_pontuacao }}</div>
+    <div class="col-partidas">{{ jogador.total_partidas }} jogadas</div>
+    <div class="col-taxa">
+      {{ taxa }}%
+      <div class="taxa-bar">
+        <div class="taxa-fill" style="width: {{ taxa }}%"></div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  {% else %}
+  <div class="empty-state">
+    Nenhum jogador ainda.<br>
+    Seja o primeiro!<br><br>
+    <a href="/jogo" class="btn-jogar">Jogar Agora</a>
+  </div>
+  {% endif %}
+</main>
+</body>
+</html>

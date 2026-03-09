@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MathGame — Perfil</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --border2: #2a2a3a;
+    --accent: #f0e040;
+    --accent2: #40e0f0;
+    --green: #40f090;
+    --danger: #f04060;
+    --text: #e8e8f0;
+    --muted: #555570;
+    --card: #13131c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .header-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow: 0 0 20px rgba(240,224,64,0.3);
+    text-decoration: none;
+  }
+
+  .header-nav { display: flex; gap: 0.5rem; }
+
+  .nav-btn {
+    padding: 0.4rem 0.9rem;
+    background: none;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  main {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  /* ── Cabeçalho do perfil ── */
+  .perfil-hero {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .perfil-hero::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), var(--accent2), transparent);
+  }
+
+  .avatar-grande {
+    width: 80px;
+    height: 80px;
+    background: rgba(240,224,64,0.1);
+    border: 2px solid var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  .perfil-info { flex: 1; }
+
+  .perfil-username {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 4px;
+    color: var(--text);
+    margin-bottom: 0.25rem;
+  }
+
+  .perfil-desde {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+  }
+
+  .melhor-score {
+    text-align: right;
+  }
+
+  .melhor-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .melhor-valor {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3.5rem;
+    color: var(--accent);
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(240,224,64,0.3);
+    line-height: 1;
+  }
+
+  /* ── Grid de estatísticas ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+  }
+
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 1.25rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .stat-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .stat-card.amarelo::after { background: var(--accent); }
+  .stat-card.ciano::after { background: var(--accent2); }
+  .stat-card.verde::after { background: var(--green); }
+  .stat-card.vermelho::after { background: var(--danger); }
+
+  .stat-card-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-card-val {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 3px;
+    line-height: 1;
+  }
+
+  .stat-card.amarelo .stat-card-val { color: var(--accent); }
+  .stat-card.ciano .stat-card-val { color: var(--accent2); }
+  .stat-card.verde .stat-card-val { color: var(--green); }
+  .stat-card.vermelho .stat-card-val { color: var(--danger); }
+
+  /* ── Historico ── */
+  .section-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .historico-header {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 100px 80px 80px;
+    padding: 0.5rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 1px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .historico-row {
+    display: grid;
+    grid-template-columns: 80px 1fr 120px 100px 80px 80px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    margin-bottom: 0.3rem;
+    align-items: center;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    font-size: 0.82rem;
+  }
+
+  .historico-row:hover { border-color: var(--border2); transform: translateX(2px); }
+  .historico-row.acerto { border-left-color: var(--green); }
+  .historico-row.erro { border-left-color: var(--danger); }
+
+  .h-resultado {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    padding: 0.2rem 0.5rem;
+    display: inline-block;
+  }
+
+  .h-resultado.acerto { color: var(--green); background: rgba(64,240,144,0.1); }
+  .h-resultado.erro { color: var(--danger); background: rgba(240,64,96,0.1); }
+
+  .h-op {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--accent2);
+  }
+
+  .h-expr {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+  }
+
+  .h-pontos {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    color: var(--accent);
+    letter-spacing: 1px;
+  }
+
+  .h-tempo {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .h-dif {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 2rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    line-height: 2;
+  }
+</style>
+</head>
+<body>
+<header>
+  <a href="/jogo" class="header-logo">MATHGAME</a>
+  <div class="header-nav">
+    <a href="/jogo" class="nav-btn">← Jogar</a>
+    <a href="/ranking" class="nav-btn">Ranking</a>
+  </div>
+</header>
+
+<main>
+  <!-- Hero do perfil -->
+  <div class="perfil-hero">
+    <div class="avatar-grande">{{ stats.username[0]|upper }}</div>
+    <div class="perfil-info">
+      <div class="perfil-username">{{ stats.username }}</div>
+      <div class="perfil-desde">
+        Membro desde {{ stats.criado_em[:10] if stats.criado_em else '—' }}
+      </div>
+      {% if stats.operacao_favorita %}
+      <div class="perfil-desde" style="margin-top: 0.25rem;">
+        Operação mais acertada: {{ stats.operacao_favorita.operacao }}
+      </div>
+      {% endif %}
+    </div>
+    <div class="melhor-score">
+      <div class="melhor-label">Melhor Score</div>
+      <div class="melhor-valor">{{ stats.melhor_pontuacao }}</div>
+    </div>
+  </div>
+
+  <!-- Grid de stats -->
+  <div class="stats-grid">
+    <div class="stat-card amarelo">
+      <div class="stat-card-label">Total Partidas</div>
+      <div class="stat-card-val">{{ stats.total_partidas }}</div>
+    </div>
+    <div class="stat-card verde">
+      <div class="stat-card-label">Total Acertos</div>
+      <div class="stat-card-val">{{ stats.total_acertos }}</div>
+    </div>
+    <div class="stat-card ciano">
+      <div class="stat-card-label">Taxa de Acerto</div>
+      <div class="stat-card-val">{{ stats.taxa_acerto }}%</div>
+    </div>
+    <div class="stat-card vermelho">
+      <div class="stat-card-label">Tempo Médio</div>
+      <div class="stat-card-val" style="font-size:1.8rem;">
+        {{ stats.tempo_medio_resposta ~ 's' if stats.tempo_medio_resposta else '—' }}
+      </div>
+    </div>
+  </div>
+
+  <!-- Histórico -->
+  <div>
+    <div class="section-title">Últimas 10 Partidas</div>
+
+    {% if historico %}
+    <div class="historico-header">
+      <span>Resultado</span>
+      <span>Operação</span>
+      <span>Expressão</span>
+      <span>Pontos</span>
+      <span>Tempo</span>
+      <span>Nível</span>
+    </div>
+
+    {% for p in historico %}
+    <div class="historico-row {{ 'acerto' if p.acertou else 'erro' }}">
+      <div>
+        <span class="h-resultado {{ 'acerto' if p.acertou else 'erro' }}">
+          {{ '✓ CERTO' if p.acertou else '✗ ERRO' }}
+        </span>
+      </div>
+      <div class="h-op">{{ p.operacao }}</div>
+      <div class="h-expr">
+        {% if p.operacao == 'raiz' %}
+          √{{ p.valor1|int }} = {{ p.resultado_correto|int }}
+        {% else %}
+          {{ p.valor1|int }} ? {{ p.valor2|int }} = {{ p.resultado_correto }}
+        {% endif %}
+      </div>
+      <div class="h-pontos">{{ p.pontos }}</div>
+      <div class="h-tempo">
+        {{ p.tempo_resposta|round(1) ~ 's' if p.tempo_resposta else '—' }}
+      </div>
+      <div class="h-dif">Nív. {{ p.dificuldade }}</div>
+    </div>
+    {% endfor %}
+
+    {% else %}
+    <div class="empty">
+      Nenhuma partida ainda.<br>Vá jogar!
+    </div>
+    {% endif %}
+  </div>
+</main>
+</body>
+</html>
